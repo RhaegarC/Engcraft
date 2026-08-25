@@ -198,6 +198,7 @@ function renderSpellingItem(word) {
     <div class="spell">
       <button id="listenBtn" class="listen" aria-label="Listen">🔊</button>
       <div class="zh-big" data-en="${word.en}">${word.zh}</div>
+      <div class="zh-big" data-en="${word.en}">${word.forms}</div>
       <form id="spellForm" class="spell-form" autocomplete="off">
         <input id="spellInput" type="text" autocomplete="off"
                autocapitalize="off" autocorrect="off" spellcheck="false"
@@ -236,7 +237,7 @@ function renderSpellingItem(word) {
     } else {
       state.missed.push(word);
       feedback.className = "feedback bad";
-      feedback.innerHTML = `✗  Not quite — the word is <b>${word.en}</b>`;
+      feedback.innerHTML = `✗  Not quite — the word is&nbsp;'${word.en}'`;
     }
     checkBtn.textContent = "Next →";
     checkBtn.classList.add("is-next");
