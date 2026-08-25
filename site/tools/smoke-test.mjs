@@ -91,6 +91,25 @@ async function main() {
   }
 
   check(cards === 4, `menu renders 4 activity cards (got ${cards})`);
+
+  // Data integrity: every usage sentence must have >=3 safe distractors (words
+  // that are NOT also grammatically correct), so exactly one of 4 options is right.
+  const dataCheck = await evaluate(`(() => {
+    const bad = [];
+    for (const mod of MODULES) {
+      const all = mod.words.map((w) => w.en);
+      for (const u of mod.usage) {
+        const also = u.alsoCorrect || [];
+        if (!all.includes(u.answer)) bad.push(u.prompt + ': answer "' + u.answer + '" not in word list');
+        for (const w of also) if (!all.includes(w)) bad.push(u.prompt + ': alsoCorrect "' + w + '" not in word list');
+        if (also.includes(u.answer)) bad.push(u.prompt + ': answer is in alsoCorrect');
+        const avail = all.filter((w) => w !== u.answer && !also.includes(w));
+        if (avail.length < 3) bad.push(u.prompt + ': only ' + avail.length + ' safe distractors (<3)');
+      }
+    }
+    return bad;
+  })()`);
+  check(Array.isArray(dataCheck) && dataCheck.length === 0, `usage data has exactly-one-correct constraints (${dataCheck.length} issue(s)${dataCheck.length ? ": " + dataCheck.join("; ") : ""})`);
   const menuState = await evaluate(`({
     cards: document.querySelectorAll('.card').length,
     menuHidden: document.querySelector('#menu').hidden,
@@ -158,6 +177,23 @@ async function main() {
   check(usage.hasSentence && usage.blankKept, "usage shows sentence with blank");
   check(usage.opts === 4, `usage shows 4 options (${usage.opts})`);
   check(usage.progress === "0 / 10", `usage round is 10 items (${usage.progress})`);
+
+  // The 4 shown options must contain exactly one grammatically-correct word (the
+  // answer); no other displayed option may be in that item's alsoCorrect list.
+  const optsCheck = await evaluate(`(() => {
+    const sentence = document.querySelector('.sentence')?.textContent;
+    const item = MODULES.flatMap((m) => m.usage).find((u) => u.prompt === sentence);
+    if (!item) return { ok: false, reason: "no data item for shown sentence" };
+    const shown = Array.from(document.querySelectorAll('.opt')).map((o) => o.textContent);
+    const also = item.alsoCorrect || [];
+    const answersShown = shown.filter((w) => w === item.answer).length;
+    const alsoShown = shown.filter((w) => w !== item.answer && also.includes(w));
+    return { ok: answersShown === 1 && alsoShown.length === 0, sentence, shown, answer: item.answer, answersShown, alsoShown };
+  })()`);
+  check(
+    optsCheck.ok,
+    `exactly one correct option shown (sentence="${optsCheck.sentence}", options=[${optsCheck.shown.join(", ")}], answer="${optsCheck.answer}", also-correct shown: ${(optsCheck.alsoShown || []).join(", ") || "none"})`
+  );
 
   // Tap the correct option (button whose text equals the answer we know from data? we don't know which sentence;
   // instead pick any option and verify feedback appears + next button shows).

@@ -247,7 +247,17 @@ function renderSpellingItem(word) {
 
 function renderUsageItem(item) {
   const mod = MODULES.find((m) => m.id === state.moduleId);
-  const distractors = shuffle(mod.words.map((w) => w.en).filter((w) => w !== item.answer)).slice(0, 3);
+  const pool = mod.words.map((w) => w.en).filter((w) => w !== item.answer);
+  const bad = item.alsoCorrect || [];
+  // Only offer options that are NOT also grammatically correct, so exactly one
+  // of the four choices is right (e.g. "help ___" never pairs them with him/her/us).
+  let distractors = shuffle(pool.filter((w) => !bad.includes(w))).slice(0, 3);
+  if (distractors.length < 3) {
+    // Defensive: if a future sentence leaves <3 safe words, pad with non-answer
+    // words so four options always render.
+    const extra = shuffle(pool.filter((w) => !distractors.includes(w))).slice(0, 3 - distractors.length);
+    distractors = distractors.concat(extra);
+  }
   const options = shuffle([item.answer, ...distractors]);
 
   const v = el(`
