@@ -1,10 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(command -v node python python3 magick convert rsvg-convert inkscape)",
-      "Bash(python -c \"import PIL; print\\('PIL', PIL.__version__\\)\")",
-      "Bash(python -c \"import zlib, struct; print\\('stdlib png ok'\\)\")",
-      "Bash(python tools/make-icons.py)",
+      "Bash(command -v node magick convert rsvg-convert inkscape)",
       "Bash(node --check app.js)",
       "Bash(node --check data.js)",
       "Bash(node --check sw.js)",
@@ -26,7 +23,10 @@
       "Bash(taskkill //PID 9044 //T //F)",
       "Bash(taskkill //PID 27644 //T //F)",
       "Bash(taskkill //PID 30296 //T //F)",
-      "Bash(site/data.js)"
+      "Bash(site/data.js)",
+      "Bash(node tools/make-icons.mjs)",
+      "Bash(node --check tools/make-icons.mjs)",
+      "Bash(node --check tools/smoke-test.mjs)"
     ]
   }
 }
