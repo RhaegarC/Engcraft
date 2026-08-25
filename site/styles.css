@@ -251,6 +251,13 @@ h1 {
 .zh-big {
   font-size: 84px;
   font-weight: 800;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.from-big {
+  font-size: 64px;
+  font-weight: 800;
   line-height: 1.15;
   margin-bottom: 22px;
   color: var(--ink);
