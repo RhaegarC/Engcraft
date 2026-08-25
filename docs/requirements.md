@@ -60,6 +60,7 @@ Notes:
 - `you` and `it` are the same word in subject and object roles.
 - The source list repeated `your, yours` (2nd-person singular and plural are the same words) — treated as **one pair, 12 distinct words**.
 - The possessive module deliberately mixes adjective (`my`) and pronoun (`mine`) forms so usage exercises can contrast them.
+- Each word carries a **`forms` tag** in the data: personal words are `sub` / `obj` / `sub/obj`; possessive words are `poss-adj` (used before a noun) or `poss-pron` (stands alone). This records the subject/object and adjective/pronoun contrast explicitly, per word.
 
 ### 4.2 Spelling prompts
 

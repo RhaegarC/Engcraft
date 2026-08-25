@@ -102,6 +102,11 @@ async function main() {
     const bad = [];
     for (const mod of MODULES) {
       const all = mod.words.map((w) => w.en);
+      const allowedForms = mod.id === "personal" ? ["sub", "obj", "sub/obj"] : ["poss-adj", "poss-pron"];
+      for (const w of mod.words) {
+        if (!w.forms) bad.push(mod.id + ': word "' + w.en + '" is missing the forms tag');
+        else if (!allowedForms.includes(w.forms)) bad.push(mod.id + ': word "' + w.en + '" has invalid forms "' + w.forms + '" (allowed: ' + allowedForms.join(", ") + ")");
+      }
       for (const u of mod.usage) {
         const also = u.alsoCorrect || [];
         if (!all.includes(u.answer)) bad.push(u.prompt + ': answer "' + u.answer + '" not in word list');

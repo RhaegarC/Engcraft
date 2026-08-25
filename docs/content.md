@@ -6,20 +6,20 @@ Drafted content embedded in site/data.js. **Please review** — especially the u
 
 ### Spelling prompts (Chinese + spoken English)
 
-| English | Chinese prompt |
-|---|---|
-| I | 我 |
-| me | 我 |
-| you | 你 |
-| he | 他 |
-| him | 他 |
-| she | 她 |
-| her | 她 |
-| it | 它 |
-| we | 我们 |
-| us | 我们 |
-| they | 他们 |
-| them | 他们 |
+| English | Form | Chinese prompt |
+|---|---|---|
+| I | subject | 我 |
+| me | object | 我 |
+| you | subject / object | 你 |
+| he | subject | 他 |
+| him | object | 他 |
+| she | subject | 她 |
+| her | object | 她 |
+| it | subject / object | 它 |
+| we | subject | 我们 |
+| us | object | 我们 |
+| they | subject | 他们 |
+| them | object | 他们 |
 
 ### Usage sentences (multiple choice)
 
@@ -44,20 +44,28 @@ The app never shows an "also correct" word as a wrong option, so exactly one of 
 
 ### Spelling prompts (Chinese + spoken English)
 
-| English | Chinese prompt |
-|---|---|
-| my | 我的 |
-| mine | 我的 |
-| your | 你的 |
-| yours | 你的 |
-| his | 他的 |
-| her | 她的 |
-| hers | 她的 |
-| its | 它的 |
-| our | 我们的 |
-| ours | 我们的 |
-| their | 他们的 |
-| theirs | 他们的 |
+| English | Form | Chinese prompt |
+|---|---|---|
+| my | possessive adjective | 我的 |
+| mine | possessive pronoun | 我的 |
+| your | possessive adjective | 你的 |
+| yours | possessive pronoun | 你的 |
+| his | possessive adjective | 他的 |
+| her | possessive adjective | 她的 |
+| hers | possessive pronoun | 她的 |
+| its | possessive adjective | 它的 |
+| our | possessive adjective | 我们的 |
+| ours | possessive pronoun | 我们的 |
+| their | possessive adjective | 他们的 |
+| theirs | possessive pronoun | 他们的 |
+
+---
+
+### Form legend (the `forms` field in `site/data.js`)
+
+- **Personal:** `sub` = subject (*I, he, she, it, we, they*); `obj` = object (*me, him, her, us, them*); `sub/obj` = the same word in both roles (*you, it*).
+- **Possessive:** `poss-adj` = possessive adjective, used before a noun (*my, your, his, her, its, our, their*); `poss-pron` = possessive pronoun, stands alone (*mine, yours, hers, ours, theirs*).
+- **Note:** *his* is form-invariant — the same word works as both adjective ("his bike") and pronoun ("this is his"). It is tagged `poss-adj` in the data.
 
 ### Usage sentences (multiple choice)
 
