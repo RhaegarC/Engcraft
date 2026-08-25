@@ -76,6 +76,10 @@ async function main() {
     });
   const evaluate = async (expression) => {
     const r = await send("Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true });
+    if (r?.exceptionDetails) {
+      const desc = r.exceptionDetails.exception?.description || r.exceptionDetails.text || "unknown";
+      throw new Error("page exception during evaluate: " + desc);
+    }
     return r?.result?.value;
   };
 
@@ -155,11 +159,12 @@ async function main() {
   const fb = await evaluate(`({
     text: document.querySelector('#spellFeedback').textContent,
     bad: document.querySelector('#spellFeedback').classList.contains('bad'),
-    nextShown: !document.querySelector('#nextBtn').hidden,
+    submitText: document.querySelector('#spellSubmit').textContent,
+    isNext: document.querySelector('#spellSubmit').classList.contains('is-next'),
   })`);
   check(fb.bad, "spelling wrong answer marks red feedback");
   check(/Not quite/.test(fb.text), `spelling reveals correct word on a miss (${fb.text.trim()})`);
-  check(fb.nextShown, "spelling next button appears after check");
+  check(fb.isNext && /Next/.test(fb.submitText), `spelling Check button turns into Next ("${fb.submitText}")`);
 
   // Verify usage view.
   await evaluate(`document.querySelector('#backBtn').click()`);
@@ -209,6 +214,49 @@ async function main() {
   check(answered.feedbackShown, "usage feedback appears after tap");
   check(answered.nextShown, "next button appears after tap");
   check(answered.disabledAll, "options lock after tap");
+
+  // Play a full spelling round (1 wrong + 9 right) and verify the result summary.
+  await evaluate(`document.querySelector('#backBtn').click()`);
+  await sleep(100);
+  await evaluate(`document.querySelector('[data-mod="personal"][data-feature="spelling"]').click()`);
+  await sleep(200);
+  const played = await evaluate(`(() => {
+    for (let i = 0; i < 10; i++) {
+      const en = document.querySelector('.zh-big').dataset.en; // exact target word
+      const inp = document.querySelector('#spellInput');
+      inp.value = (i === 0) ? 'zzzz' : en; // first answer deliberately wrong
+      document.querySelector('#spellForm').dispatchEvent(new Event('submit', { cancelable: true }));
+      document.querySelector('#spellSubmit').click(); // Check button now says Next → and advances
+    }
+    const items = Array.from(document.querySelectorAll('.summary-item'));
+    const bad = items.filter((it) => it.classList.contains('bad'));
+    const firstBad = bad[0] ? bad[0].textContent : '';
+    return {
+      count: items.length,
+      badCount: bad.length,
+      firstBadShowsCorrect: firstBad.includes('correct:'),
+      score: document.querySelector('.score').textContent,
+      retryShown: !!document.querySelector('#retryMissed'),
+    };
+  })()`);
+  check(played.count === 10, `result summary lists all 10 questions (got ${played.count})`);
+  check(played.badCount === 1, `exactly 1 wrong answer marked red (got ${played.badCount})`);
+  check(played.firstBadShowsCorrect, "wrong answer row reveals the correct word");
+  check(played.score === "9", `summary score is 9/10 (got "${played.score}")`);
+  check(played.retryShown, "retry-missed button shown after round");
+
+  // Retry the 1 missed item: its summary must show only that question (answers reset).
+  const retried = await evaluate(`(() => {
+    document.querySelector('#retryMissed').click();
+    const en = document.querySelector('.zh-big').dataset.en;
+    const inp = document.querySelector('#spellInput');
+    inp.value = en;
+    document.querySelector('#spellForm').dispatchEvent(new Event('submit', { cancelable: true }));
+    document.querySelector('#spellSubmit').click();
+    return { count: document.querySelectorAll('.summary-item').length, score: document.querySelector('.score').textContent };
+  })()`);
+  check(retried.count === 1, `retry summary shows only the 1 retried question (got ${retried.count})`);
+  check(retried.score === "1", `retry summary score is 1/1 (got "${retried.score}")`);
 
   // Final: no uncaught exceptions.
   await sleep(300);

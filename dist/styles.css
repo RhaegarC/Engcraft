@@ -291,6 +291,12 @@ h1 {
   font-size: 19px;
   font-weight: 800;
   flex: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.check-btn.is-next {
+  background: var(--amber);
+  color: #7a5b00;
 }
 
 /* ============================== usage ============================== */
@@ -435,6 +441,64 @@ h1 {
   color: #fff;
   box-shadow: none;
 }
+
+/* ========================= result summary ========================== */
+
+.result {
+  max-height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.summary {
+  text-align: left;
+  margin-top: 24px;
+  background: var(--card);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.summary h4 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+.summary-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summary-item {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fff;
+  border-left: 6px solid var(--green);
+}
+
+.summary-item.bad {
+  border-left-color: var(--red);
+  background: #fff5f5;
+}
+
+.s-q {
+  display: block;
+  font-weight: 800;
+}
+
+.s-ans {
+  display: block;
+  font-size: 15px;
+  margin-top: 2px;
+  color: #555;
+}
+
+.s-ans .good { color: var(--green-dark); }
+.s-ans .bad { color: var(--red); }
 
 /* ============================== media ============================== */
 

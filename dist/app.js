@@ -59,7 +59,7 @@ const TTS = (() => {
     s.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "en-US";
-    u.rate = 0.85;
+    u.rate = 0.5; // slow enough for young learners to hear each word clearly
     if (englishVoice) u.voice = englishVoice;
     // setTimeout(0) after cancel is the standard iOS quirk workaround.
     setTimeout(() => s.speak(u), 0);
@@ -161,6 +161,7 @@ function startActivity(moduleId, feature) {
     index: 0,
     score: 0,
     missed: [],
+    answers: [], // { item, given, correct } in round order, for the result summary
   };
   showActivity();
   renderItem();
@@ -196,15 +197,14 @@ function renderSpellingItem(word) {
   const v = el(`
     <div class="spell">
       <button id="listenBtn" class="listen" aria-label="Listen">🔊</button>
-      <div class="zh-big">${word.zh}</div>
+      <div class="zh-big" data-en="${word.en}">${word.zh}</div>
       <form id="spellForm" class="spell-form" autocomplete="off">
         <input id="spellInput" type="text" autocomplete="off"
                autocapitalize="off" autocorrect="off" spellcheck="false"
                placeholder="type the English word" />
-        <button type="submit" class="check-btn">Check ✓</button>
+        <button type="submit" id="spellSubmit" class="check-btn">Check ✓</button>
       </form>
       <div id="spellFeedback" class="feedback"></div>
-      <button id="nextBtn" class="next-btn" hidden>Next →</button>
     </div>
   `);
   stageEl.appendChild(v);
@@ -212,17 +212,24 @@ function renderSpellingItem(word) {
   TTS.speak(word.en);
   const input = $("#spellInput");
   const feedback = $("#spellFeedback");
-  const nextBtn = $("#nextBtn");
+  const checkBtn = $("#spellSubmit");
 
   $("#listenBtn").addEventListener("click", () => TTS.speak(word.en));
 
   $("#spellForm").addEventListener("submit", (e) => {
     e.preventDefault();
-    const guess = input.value.trim().toLowerCase();
-    if (!guess) return;
-    const answer = word.en.toLowerCase();
+    if (input.readOnly) {
+      // Already checked — the button now acts as "Next".
+      input.blur();
+      advance();
+      return;
+    }
+    const given = input.value.trim();
+    if (!given) return;
+    const correct = given.toLowerCase() === word.en.toLowerCase();
     input.readOnly = true;
-    if (guess === answer) {
+    state.answers.push({ item: word, given, correct });
+    if (correct) {
       state.score++;
       feedback.className = "feedback good";
       feedback.innerHTML = "✓  Great!";
@@ -231,13 +238,9 @@ function renderSpellingItem(word) {
       feedback.className = "feedback bad";
       feedback.innerHTML = `✗  Not quite — the word is <b>${word.en}</b>`;
     }
-    nextBtn.hidden = false;
-    nextBtn.focus();
-  });
-
-  nextBtn.addEventListener("click", () => {
-    input.blur();
-    advance();
+    checkBtn.textContent = "Next →";
+    checkBtn.classList.add("is-next");
+    checkBtn.focus();
   });
 
   input.focus();
@@ -281,6 +284,7 @@ function renderUsageItem(item) {
       feedback.dataset.done = "1";
       const right = w === item.answer;
       optWrap.querySelectorAll(".opt").forEach((o) => (o.disabled = true));
+      state.answers.push({ item, given: w, correct: right });
       if (right) {
         b.classList.add("right");
         state.score++;
@@ -313,6 +317,21 @@ function resultMessage(score, total) {
   return "Keep practicing! You can do it!";
 }
 
+function summaryRow(a) {
+  const isSpell = state.feature === "spelling";
+  const q = isSpell
+    ? `✏️ ${a.item.zh} → <b>${a.item.en}</b>`
+    : `💬 ${a.item.prompt}`;
+  const verb = isSpell ? "typed" : "picked";
+  const ans = a.correct
+    ? `✓ you ${verb} <b>"${a.given}"</b>`
+    : `✗ you ${verb} <b>"${a.given}"</b> — correct: <b>${a.item.answer}</b>`;
+  return `<li class="summary-item ${a.correct ? "good" : "bad"}">
+    <span class="s-q">${q}</span>
+    <span class="s-ans">${ans}</span>
+  </li>`;
+}
+
 function renderResult() {
   const total = state.round.length;
   const score = state.score;
@@ -324,6 +343,12 @@ function renderResult() {
       <div class="result-actions">
         ${state.missed.length ? `<button id="retryMissed" class="btn primary">Try missed again (${state.missed.length})</button>` : ""}
         <button id="backToMenu" class="btn">Back to menu</button>
+      </div>
+      <div class="summary">
+        <h4>Review your answers</h4>
+        <ol class="summary-list">
+          ${state.answers.map(summaryRow).join("")}
+        </ol>
       </div>
     </div>
   `);
@@ -337,6 +362,7 @@ function renderResult() {
       state.index = 0;
       state.score = 0;
       state.missed = [];
+      state.answers = [];
       renderItem();
     });
   }
