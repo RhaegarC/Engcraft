@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(command -v node python python3 magick convert rsvg-convert inkscape)",
+      "Bash(python -c \"import PIL; print\\('PIL', PIL.__version__\\)\")",
+      "Bash(python -c \"import zlib, struct; print\\('stdlib png ok'\\)\")",
+      "Bash(python tools/make-icons.py)",
+      "Bash(node --check app.js)",
+      "Bash(node --check data.js)",
+      "Bash(node --check sw.js)",
+      "Bash(node -e ' *)",
+      "Read(//c/Program Files \\\\\\(x86\\\\\\)/Microsoft/Edge/Application/**)",
+      "Read(//c/Program Files/Microsoft/Edge/Application/**)",
+      "Read(//c/Program Files/Google/Chrome/Application/**)",
+      "Read(//c/Program Files \\\\\\(x86\\\\\\)/Google/Chrome/Application/**)",
+      "Bash('/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe' --headless --disable-gpu --dump-dom file:///d:/TonyDev/English/site/index.html)",
+      "Bash(echo \"exit=$?\")",
+      "Read(//tmp/**)",
+      "Bash(cmd //c '\"C:\\\\Program Files \\(x86\\)\\\\Microsoft\\\\Edge\\\\Application\\\\msedge.exe\" --headless=new --disable-gpu --no-sandbox --no-first-run --disable-extensions --user-data-dir=\"C:\\\\Users\\\\chengmu\\\\AppData\\\\Local\\\\Temp\\\\edge-ht\"')",
+      "Bash(cmd //c '\"C:\\\\Program Files \\(x86\\)\\\\Microsoft\\\\Edge\\\\Application\\\\msedge.exe\" --headless=new --disable-gpu --no-sandbox --no-first-run --user-data-dir=\"C:\\\\Users\\\\chengmu\\\\AppData\\\\Local\\\\Temp\\\\edge-ht2\" --dump-dom \"file:///d:/TonyDev/English/site/index.html\" > \"C:\\\\Users\\\\chengmu\\\\AppData\\\\Local\\\\Temp\\\\edge_dom.html\" 2>&1')",
+      "Read(//c/Users/chengmu/AppData/Local/Temp/**)",
+      "Bash(node tools/smoke-test.mjs)",
+      "Bash(node --input-type=module -e ' *)",
+      "Bash(netstat -ano)",
+      "Bash(powershell -NoProfile -Command 'Get-CimInstance Win32_Process -Filter \"Name='\\\\''msedge.exe'\\\\''\" | Where-Object { $_.CommandLine -match '\\\\''headless'\\\\'' } | Select-Object ProcessId, CommandLine | Format-List')",
+      "Bash(taskkill //PID 9044 //T //F)",
+      "Bash(taskkill //PID 27644 //T //F)",
+      "Bash(taskkill //PID 30296 //T //F)",
+      "Bash(site/data.js)"
+    ]
+  }
+}
