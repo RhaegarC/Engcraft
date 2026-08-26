@@ -1,0 +1,61 @@
+name: Deploy to Azure Blob Storage
+
+# Deploy the static site (site/) to the Azure Blob static-website endpoint
+# ($web container) whenever a PR is merged into master or develop. A manual
+# run is also available from the Actions tab.
+on:
+  pull_request:
+    types: [closed]
+    branches: [master, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Only one deploy at a time — a second merge waits rather than racing the first.
+concurrency:
+  group: deploy-azure
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # PR event: only when the PR was actually merged; workflow_dispatch skips the guard.
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Authenticate as a service principal (repo secrets):
+      #   AZURE_CREDENTIALS — JSON: {"clientId":"...","clientSecret":"...","subscriptionId":"...","tenantId":"..."}
+      # The principal needs the "Storage Blob Data Contributor" role on the storage account.
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Upload the runtime files. tools/ is dev-only (icon generator, smoke test)
+      # and is deliberately excluded. Repo variable AZURE_STORAGE_ACCOUNT holds the
+      # storage account name.
+      - name: Upload site/ to $web
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az storage blob upload-batch \
+              --account-name ${{ vars.AZURE_STORAGE_ACCOUNT }} \
+              --destination '$web' \
+              --source site \
+              --overwrite \
+              --exclude-pattern 'tools/*'
+
+      - name: Verify the live endpoint
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            URL=$(az storage account show \
+              --name ${{ vars.AZURE_STORAGE_ACCOUNT }} \
+              --query primaryEndpoints.web \
+              --output tsv)
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+            echo "Endpoint $URL returned HTTP $code"
+            test "$code" = "200"

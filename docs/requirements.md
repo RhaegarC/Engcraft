@@ -75,6 +75,7 @@ Notes:
 - Personal module exercises **subject vs object** roles (e.g. "___ am a student." → *I*; "This is for ___." → *me*).
 - Possessive module exercises **adjective vs pronoun** contrast (e.g. "This is ___ book." → *my*; "This book is ___." → *mine*).
 - Sentences are drafted by the authoring agent and **reviewed by the user**; simple, age-appropriate, class-safe.
+- The usage sentence bank is **larger than one-per-word**: the personal module has 21 sentences and the possessive module has 22, so each round's 10 sentences vary. Every sentence records its grammatically-valid alternates in `alsoCorrect` so the runtime keeps them out of the four options (exactly one correct option).
 
 ## 5. Functional Requirements
 
@@ -98,7 +99,7 @@ Notes:
 
 ### FR-4 Rounds & scoring
 
-- **FR-4.1** Each round draws **10 random words** from the module's 12, shuffled.
+- **FR-4.1** Each round draws **10 random items** from the module's pool, shuffled: spelling draws from the module's 12 words; usage draws from the module's usage-sentence bank (personal: 21 sentences, possessive: 22).
 - **FR-4.2** End-of-round: score ("You got 8/10!") + a **review missed** button that re-runs missed items.
 - **FR-4.3** Confetti on round completion.
 
