@@ -45,8 +45,7 @@ jobs:
               --account-name ${{ vars.AZURE_STORAGE_ACCOUNT }} \
               --destination '$web' \
               --source site \
-              --overwrite \
-              --exclude-path 'tools'
+              --overwrite
 
       - name: Verify the live endpoint
         uses: azure/CLI@v2
