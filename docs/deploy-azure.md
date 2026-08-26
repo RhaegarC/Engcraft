@@ -1,8 +1,10 @@
 # Deploy to Azure Blob Storage (static website)
 
-The deployable export lives in **`dist/`** (a clean copy of `site/` without dev tooling).
+The deployable site lives in **`site/`** (index.html, app.js, data.js, styles.css,
+manifest.json, sw.js, icons/). The `tools/` subfolder is dev-only and is excluded
+from deploys. Deploys are automated with a GitHub Action; manual upload is a fallback.
 
-## 1. Create / enable the storage account
+## 1. One-time Azure setup
 
 1. In the [Azure Portal](https://portal.azure.com), open your storage account
    (or create one: *Storage accounts → + Create*; any tier works, Standard LRS is cheapest).
@@ -15,19 +17,49 @@ The deployable export lives in **`dist/`** (a clean copy of `site/` without dev 
 
 Enabling static website creates an empty `$web` container.
 
-## 2. Upload the `dist/` folder
+## 2. Automated deploy (GitHub Action)
+
+A workflow at `.github/workflows/deploy-azure.yml` uploads `site/` to `$web`
+**whenever a PR is merged into `master` or `develop`** (it also has a manual
+"Run workflow" button in the Actions tab).
+
+Wire up the repo settings first:
+
+| Setting | Where | Value |
+|---|---|---|
+| **Repository secret** `AZURE_CREDENTIALS` | Settings → Secrets → Actions | Service-principal JSON (see below) |
+| **Repository variable** `AZURE_STORAGE_ACCOUNT` | Settings → Variables → Actions | your storage account name, e.g. `yourstorage` |
+
+Create the service principal (one time) and grant it upload rights:
+
+```bash
+az ad sp create-for-rbac --name "pronoun-trainer-gh" \
+  --role "Storage Blob Data Contributor" \
+  --scopes /subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/yourstorage \
+  --sdk-auth
+```
+
+The JSON printed by `--sdk-auth` is exactly the value of the `AZURE_CREDENTIALS`
+secret (it already contains `clientId`, `clientSecret`, `subscriptionId`, `tenantId`).
+If the role was granted before the workflow first runs, you may need to wait a
+few minutes for RBAC propagation.
+
+The action uploads `site/` with `--exclude-pattern 'tools/*'` so dev tooling
+never reaches the blob, then verifies the live endpoint returns HTTP 200.
+
+## 3. Manual upload (fallback)
 
 ### Option A — Azure CLI (recommended)
 
 ```bash
-az login                       # once
-az storage blob upload-batch --account-name yourstorage --destination '$web' --source dist
+az login                          # once
+az storage blob upload-batch --account-name yourstorage --destination '$web' --source site --exclude-pattern 'tools/*'
 ```
 
 ### Option B — AzCopy (fast sync; use for repeat deploys)
 
 ```bash
-azcopy sync "dist" "https://yourstorage.z13.blob.core.windows.net/\$web" --recursive
+azcopy sync "site" "https://yourstorage.z13.blob.core.windows.net/\$web" --recursive --exclude-pattern 'tools/*'
 ```
 
 Add `--delete-destination=true` to remove files that no longer exist locally.
@@ -35,9 +67,9 @@ Add `--delete-destination=true` to remove files that no longer exist locally.
 ### Option C — Portal drag-and-drop
 
 In the storage account, open **Containers → $web**, then *Upload* and select the
-contents of `dist/` (keep the `icons/` subfolder structure).
+contents of `site/` excluding `tools/` (keep the `icons/` subfolder structure).
 
-## 3. Verify
+## 4. Verify
 
 1. Open the endpoint URL from step 1 in Chrome/Edge — the app should load with
    the 2×2 menu.
@@ -52,6 +84,6 @@ contents of `dist/` (keep the `icons/` subfolder structure).
   (`.html`, `.js`, `.css`, `.json`, `.png`). No action needed.
 - **Service worker**: served over HTTPS, same origin as the page — registers
   automatically. The cache name is `pronoun-trainer-v1`; on future updates just
-  re-upload `dist/` and reload (the SW re-caches changed files on update).
+  redeploy and reload (the SW re-caches changed files on update).
 - **Custom domain / HTTPS**: the `*.web.core.windows.net` endpoint is HTTPS out of
   the box. For a custom domain you'd put Azure Front Door in front; not required now.

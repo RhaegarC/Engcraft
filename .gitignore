@@ -1,0 +1,2 @@
+# Deploy export — no longer needed; the site/ folder is deployed directly.
+dist/

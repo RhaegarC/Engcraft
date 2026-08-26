@@ -39,6 +39,15 @@ The app never shows an "also correct" word as a wrong option, so exactly one of 
 | The teacher teaches ___ English. | **us** | Use us after a verb or to — our group receives the action. | me, you, him, her, them |
 | ___ are my classmates. | **they** | They is for two or more people. | you |
 | I will help ___ tomorrow. | **them** | Use them after a verb or to — other people receive the action. | me, you, him, her, us, it |
+| ___ am going to the store. | **I** | Use I with am — I am the person speaking. | — |
+| Can you help ___? | **me** | Use me after a verb or to — me receives the action. | you, him, her, us, them |
+| ___ is my best friend. | **he** | He is a boy or man who does the action. | she |
+| I will call ___ later. | **her** | Use her after a verb or to — a girl receives the action. | me, you, him, us, them, it |
+| ___ are going to the park. | **we** | We means me and other people together. | you, they |
+| The teacher gave ___ a book. | **us** | Use us after a verb or to — our group receives the action. | me, you, him, her, them |
+| ___ are playing outside. | **they** | They is for two or more people. | you |
+| Please tell ___ the truth. | **them** | Use them after a verb or to — other people receive the action. | me, you, him, her, us, it |
+| ___ is raining outside. | **it** | It is for animals and things. | — |
 
 ## Possessive Pronouns（物主代词）
 
@@ -85,13 +94,23 @@ The app never shows an "also correct" word as a wrong option, so exactly one of 
 | This classroom is ___. | **ours** | Use ours alone, without the thing: this is ours. | mine, yours, his, hers, theirs |
 | ___ house is near the park. | **their** | Use their + a thing: their house. | my, your, his, her, our, its |
 | That house is ___. | **theirs** | Use theirs alone, without the thing: that is theirs. | mine, yours, his, hers, ours |
+| This is ___ jacket. | **my** | Use my + a thing: my jacket. | your, his, her, its, our, their |
+| This jacket is ___. | **mine** | Use mine alone, without the thing: this is mine. | yours, his, hers, ours, theirs |
+| Is this ___ favorite book? | **your** | Use your + a thing: your favorite book. | my, his, her, its, our, their |
+| This is ___ home. | **their** | Use their + a thing: their home. | my, your, his, her, our, its |
+| This home is ___. | **theirs** | Use theirs alone, without the thing: this is theirs. | mine, yours, his, hers, ours |
+| This is ___ favorite color. | **her** | Use her + a thing for a girl: her favorite color. | my, your, his, its, our, their |
+| The bag is ___. | **hers** | Use hers alone for a girl: this is hers. | mine, yours, his, ours, theirs |
+| This is ___ first day. | **our** | Use our + a thing: our first day. | my, your, his, her, its, their |
+| The school is ___. | **ours** | Use ours alone, without the thing: this is ours. | mine, yours, his, hers, theirs |
+| That is ___ cat. | **my** | Use my + a thing: my cat. | your, his, her, its, our, their |
 
 ---
 
 ### Review checklist
 
 - [ ] All 24 Chinese translations are correct for your classes
-- [ ] All 24 usage sentences are age-appropriate (7–11) and unambiguous
+- [ ] All 43 usage sentences (21 personal + 22 possessive) are age-appropriate (7–11) and unambiguous
 - [ ] Each "why" explanation is short enough and correct
 - [ ] Sentences avoid any words your classes may not know (or tell me to swap)
 

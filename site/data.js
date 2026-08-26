@@ -39,7 +39,7 @@ const MODULES = [
       { prompt: "I will help ___ tomorrow.", answer: "them", why: "Use them after a verb or to — other people receive the action.", alsoCorrect: ["me", "you", "him", "her", "us", "it"] },
       { prompt: "___ am going to the store.", answer: "I", "why": "Use I with am — I am the person speaking.", alsoCorrect: [] },
       { prompt: "Can you help ___?", answer: "me", "why": "Use me after a verb or to — me receives the action.", alsoCorrect: ["you", "him", "her", "us", "them"] },
-      { prompt: "___ is my best friend.", answer: "he", "why": "He is a boy or man who does the action.", alsoCorrect: [] },
+      { prompt: "___ is my best friend.", answer: "he", "why": "He is a boy or man who does the action.", alsoCorrect: ["she"] },
       { prompt: "I will call ___ later.", answer: "her", "why": "Use her after a verb or to — a girl receives the action.", alsoCorrect: ["me", "you", "him", "us", "them", "it"] },
       { prompt: "___ are going to the park.", answer: "we", "why": "We means me and other people together.", alsoCorrect: ["you", "they"] },
       { prompt: "The teacher gave ___ a book.", answer: "us", "why": "Use us after a verb or to — our group receives the action.", alsoCorrect: ["me", "you", "him", "her", "them"] },

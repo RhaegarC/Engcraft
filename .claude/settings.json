@@ -26,7 +26,11 @@
       "Bash(site/data.js)",
       "Bash(node tools/make-icons.mjs)",
       "Bash(node --check tools/make-icons.mjs)",
-      "Bash(node --check tools/smoke-test.mjs)"
+      "Bash(node --check tools/smoke-test.mjs)",
+      "Bash(node site/tools/smoke-test.mjs)",
+      "Bash(grep -v \"^\\\\./\\\\.git/\")",
+      "Bash(git rm *)",
+      "Bash(git add *)"
     ]
   }
 }
