@@ -46,7 +46,7 @@ jobs:
               --destination '$web' \
               --source site \
               --overwrite \
-              --exclude-pattern 'tools/*'
+              --exclude-path 'tools'
 
       - name: Verify the live endpoint
         uses: azure/CLI@v2
