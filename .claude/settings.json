@@ -30,7 +30,9 @@
       "Bash(node site/tools/smoke-test.mjs)",
       "Bash(grep -v \"^\\\\./\\\\.git/\")",
       "Bash(git rm *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
