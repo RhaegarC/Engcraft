@@ -37,6 +37,15 @@ const MODULES = [
       { prompt: "The teacher teaches ___ English.", answer: "us", why: "Use us after a verb or to — our group receives the action.", alsoCorrect: ["me", "you", "him", "her", "them"] },
       { prompt: "___ are my classmates.", answer: "they", why: "They is for two or more people.", alsoCorrect: ["you"] },
       { prompt: "I will help ___ tomorrow.", answer: "them", why: "Use them after a verb or to — other people receive the action.", alsoCorrect: ["me", "you", "him", "her", "us", "it"] },
+      { prompt: "___ am going to the store.", answer: "I", "why": "Use I with am — I am the person speaking.", alsoCorrect: [] },
+      { prompt: "Can you help ___?", answer: "me", "why": "Use me after a verb or to — me receives the action.", alsoCorrect: ["you", "him", "her", "us", "them"] },
+      { prompt: "___ is my best friend.", answer: "he", "why": "He is a boy or man who does the action.", alsoCorrect: [] },
+      { prompt: "I will call ___ later.", answer: "her", "why": "Use her after a verb or to — a girl receives the action.", alsoCorrect: ["me", "you", "him", "us", "them", "it"] },
+      { prompt: "___ are going to the park.", answer: "we", "why": "We means me and other people together.", alsoCorrect: ["you", "they"] },
+      { prompt: "The teacher gave ___ a book.", answer: "us", "why": "Use us after a verb or to — our group receives the action.", alsoCorrect: ["me", "you", "him", "her", "them"] },
+      { prompt: "___ are playing outside.", answer: "they", "why": "They is for two or more people.", alsoCorrect: ["you"] },
+      { prompt: "Please tell ___ the truth.", answer: "them", "why": "Use them after a verb or to — other people receive the action.", alsoCorrect: ["me", "you", "him", "her", "us", "it"] },
+      { prompt: "___ is raining outside.", answer: "it", "why": "It is for animals and things.", alsoCorrect: [] }
     ],
   },
   {
@@ -72,6 +81,16 @@ const MODULES = [
       { prompt: "This classroom is ___.", answer: "ours", why: "Use ours alone, without the thing: this is ours.", alsoCorrect: ["mine", "yours", "his", "hers", "theirs"] },
       { prompt: "___ house is near the park.", answer: "their", why: "Use their + a thing: their house.", alsoCorrect: ["my", "your", "his", "her", "our", "its"] },
       { prompt: "That house is ___.", answer: "theirs", why: "Use theirs alone, without the thing: that is theirs.", alsoCorrect: ["mine", "yours", "his", "hers", "ours"] },
+      { prompt: "This is ___ jacket.", answer: "my", "why": "Use my + a thing: my jacket.", alsoCorrect: ["your", "his", "her", "its", "our", "their"] },
+      { prompt: "This jacket is ___.", answer: "mine", "why": "Use mine alone, without the thing: this is mine.", alsoCorrect: ["yours", "his", "hers", "ours", "theirs"] },
+      { prompt: "Is this ___ favorite book?", answer: "your", "why": "Use your + a thing: your favorite book.", alsoCorrect: ["my", "his", "her", "its", "our", "their"] },
+      { prompt: "This is ___ home.", answer: "their", "why": "Use their + a thing: their home.", alsoCorrect: ["my", "your", "his", "her", "our", "its"] },
+      { prompt: "This home is ___.", answer: "theirs", "why": "Use theirs alone, without the thing: this is theirs.", alsoCorrect: ["mine", "yours", "his", "hers", "ours"] },
+      { prompt: "This is ___ favorite color.", answer: "her", "why": "Use her + a thing for a girl: her favorite color.", alsoCorrect: ["my", "your", "his", "its", "our", "their"] },
+      { prompt: "The bag is ___.", answer: "hers", "why": "Use hers alone for a girl: this is hers.", alsoCorrect: ["mine", "yours", "his", "ours", "theirs"] },
+      { prompt: "This is ___ first day.", answer: "our", "why": "Use our + a thing: our first day.", alsoCorrect: ["my", "your", "his", "her", "its", "their"] },
+      { prompt: "The school is ___.", answer: "ours", "why": "Use ours alone, without the thing: this is ours.", alsoCorrect: ["mine", "yours", "his", "hers", "theirs"] },
+      { prompt: "That is ___ cat.", answer: "my", "why": "Use my + a thing: my cat.", alsoCorrect: ["your", "his", "her", "its", "our", "their"] }
     ],
   },
 ];
