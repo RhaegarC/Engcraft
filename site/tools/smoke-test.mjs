@@ -204,7 +204,7 @@ async function main() {
   // answer); no other displayed option may be in that item's alsoCorrect list.
   const optsCheck = await evaluate(`(() => {
     const sentence = document.querySelector('.sentence')?.textContent;
-    const item = MODULES.flatMap((m) => m.usage).find((u) => u.prompt === sentence);
+    const item = MODULES.flatMap((m) => m.usage || []).find((u) => u.prompt === sentence);
     if (!item) return { ok: false, reason: "no data item for shown sentence" };
     const shown = Array.from(document.querySelectorAll('.opt')).map((o) => o.textContent);
     const also = item.alsoCorrect || [];

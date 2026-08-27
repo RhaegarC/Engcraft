@@ -23,13 +23,13 @@ A simple, playful static web app — **"Pronoun Trainer"** — that gives Chines
 
 ### 3.1 In scope
 
-- One-page static site with a **grid of five activity cards** — a 2×2 block of
-  pronoun activities plus a full-width fifth card:
-  1. Personal pronouns — Spelling
-  2. Personal pronouns — Usage
-  3. Possessive pronouns — Spelling
-  4. Possessive pronouns — Usage
-  5. There be — Choice (single-option grammar selection)
+- One-page static site with a **grid of five activity cards** — a full-width
+  "There be" card at the top, then a 2×2 block of pronoun activities below:
+  1. There be — Choice (single-option grammar selection)
+  2. Personal pronouns — Spelling
+  3. Personal pronouns — Usage
+  4. Possessive pronouns — Spelling
+  5. Possessive pronouns — Usage
 - Word lists, practice rounds, scoring and feedback
 - Runtime TTS audio (Web Speech API, `speechSynthesis`)
 - PWA: manifest, offline-first service worker, app icons, iOS standalone meta tags

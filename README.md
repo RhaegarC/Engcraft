@@ -9,16 +9,17 @@ offline after the first visit and can be installed to the home screen.
 
 ## Activities
 
-A single-page menu offers a 2×2 grid of four activities (module × skill):
+A single-page menu leads with a full-width **There Be** card, then a 2×2 grid of
+four pronoun activities (module × skill):
 
 |  | ✏️ Spelling | 💬 Usage |
 |---|---|---|
+| **There Be** 句型 | — | 🎯 Choice |
 | **Personal** 人称代词 | Type the word you hear | Subject vs object in context |
 | **Possessive** 物主代词 | Type the word you hear | Adjective vs pronoun in context |
 
-Plus a fifth, full-width card — **There Be** 句型 · 🎯 *Choice* — a single-option
-grammar selection for "there be" sentences (is/are, Is/Are, any/some, isn't/aren't,
-was/were).
+The **Choice** card is a single-option grammar selection for "there be" sentences
+(is/are, Is/Are, any/some, isn't/aren't, was/were).
 
 - **Spelling** — shows a Chinese prompt (e.g. 我的) and speaks the English word;
   the child types it from memory. `Check ✓` turns into `Next →` after each answer.
