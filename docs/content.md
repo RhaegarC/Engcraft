@@ -73,8 +73,8 @@ The app never shows an "also correct" word as a wrong option, so exactly one of 
 ### Form legend (the `forms` field in `site/data.js`)
 
 - **Personal:** `sub` = subject (*I, he, she, it, we, they*); `obj` = object (*me, him, her, us, them*); `sub/obj` = the same word in both roles (*you, it*).
-- **Possessive:** `poss-adj` = possessive adjective, used before a noun (*my, your, his, her, its, our, their*); `poss-pron` = possessive pronoun, stands alone (*mine, yours, hers, ours, theirs*).
-- **Note:** *his* is form-invariant — the same word works as both adjective ("his bike") and pronoun ("this is his"). It is tagged `poss-adj` in the data.
+- **Possessive:** `PA` = possessive adjective, used before a noun (*my, your, his, her, its, our, their*); `PP` = possessive pronoun, stands alone (*mine, yours, hers, ours, theirs*).
+- **Note:** *his* is form-invariant — the same word works as both adjective ("his bike") and pronoun ("this is his"). It is tagged `PA` in the data.
 
 ### Usage sentences (multiple choice)
 
@@ -107,10 +107,63 @@ The app never shows an "also correct" word as a wrong option, so exactly one of 
 
 ---
 
+## There Be Sentences（There be 句型）
+
+A fifth activity — a **single-option grammar choice** for "there be" sentences.
+Each question has its own small word bank (is/are, Is/Are, isn't/aren't, any/some,
+was/were, Was/Were); exactly one option is grammatically correct. The bank holds
+**40 sentences**; each round draws 10 at random.
+
+| Sentence (blank = answer) | Answer | Options | Why (shown on wrong tap) |
+|---|---|---|---|
+| There ___ a dog under the tree. | **is** | is / are | One thing → is. |
+| There ___ 3 cats running. | **are** | is / are | Two or more → are. |
+| There ___ a book on the table. | **is** | is / are | One thing → is. |
+| There ___ 2 apples in the bowl. | **are** | is / are | Two or more → are. |
+| There ___ a bird in the sky. | **is** | is / are | One thing → is. |
+| There ___ 5 students in the class. | **are** | is / are | Two or more → are. |
+| There ___ milk in the cup. | **is** | is / are | Milk is uncountable → is. |
+| There ___ some water in the bottle. | **is** | is / are | Some water is uncountable → is. |
+| There ___ a big tree in the park. | **is** | is / are | One thing → is. |
+| There ___ many stars in the sky. | **are** | is / are | Two or more → are. |
+| There ___ a pencil on the desk. | **is** | is / are | One thing → is. |
+| There ___ 2 windows in the room. | **are** | is / are | Two or more → are. |
+| ___ there a pencil on the desk? | **Is** | Is / Are | Asking about one thing → Is. |
+| ___ there any books in the bag? | **Are** | Is / Are | Asking about two or more → Are. |
+| ___ there a cat under the chair? | **Is** | Is / Are | Asking about one thing → Is. |
+| ___ there many people at the party? | **Are** | Is / Are | Asking about two or more → Are. |
+| ___ there a teacher in the classroom? | **Is** | Is / Are | Asking about one thing → Is. |
+| ___ there 2 dogs in the park? | **Are** | Is / Are | Asking about two or more → Are. |
+| ___ there any water in the glass? | **Is** | Is / Are | Water is uncountable → Is. |
+| ___ there 3 birds on the roof? | **Are** | Is / Are | Asking about two or more → Are. |
+| There isn't ___ pencil. | **any** | any / some | Negatives use any. |
+| There aren't ___ apples in the basket. | **any** | any / some | Negatives use any. |
+| There are ___ birds in the tree. | **some** | any / some | Positive sentences use some. |
+| There is ___ milk in the fridge. | **some** | any / some | Positive sentences use some. |
+| There isn't ___ milk in the cup. | **any** | any / some | Negatives use any. |
+| There aren't ___ books on the shelf. | **any** | any / some | Negatives use any. |
+| There is ___ water in the bottle. | **some** | any / some | Positive sentences use some. |
+| There aren't ___ children in the park. | **any** | any / some | Negatives use any. |
+| There ___ a pen on the desk. | **isn't** | isn't / aren't | One thing, not → isn't. |
+| There ___ any chairs in the room. | **aren't** | isn't / aren't | Two or more, not → aren't. |
+| There ___ a cat in the box. | **isn't** | isn't / aren't | One thing, not → isn't. |
+| There ___ 2 birds in the cage. | **aren't** | isn't / aren't | Two or more, not → aren't. |
+| There ___ any milk in the cup. | **isn't** | isn't / aren't | Milk is uncountable → isn't. |
+| There ___ any students in the classroom. | **aren't** | isn't / aren't | Two or more, not → aren't. |
+| There ___ a big dog in the yard yesterday. | **was** | was / were | One thing in the past → was. |
+| There ___ 3 cats on the roof last night. | **were** | was / were | Two or more in the past → were. |
+| There ___ a cake on the table this morning. | **was** | was / were | One thing in the past → was. |
+| There ___ many people at the party yesterday. | **were** | was / were | Two or more in the past → were. |
+| ___ there a park near your home last year? | **Was** | Was / Were | Asking about one thing in the past → Was. |
+| ___ there any toys in the box yesterday? | **Were** | Was / Were | Asking about two or more in the past → Were. |
+
+---
+
 ### Review checklist
 
 - [ ] All 24 Chinese translations are correct for your classes
 - [ ] All 43 usage sentences (21 personal + 22 possessive) are age-appropriate (7–11) and unambiguous
+- [ ] All 40 there-be questions are age-appropriate (7–11) and unambiguous
 - [ ] Each "why" explanation is short enough and correct
 - [ ] Sentences avoid any words your classes may not know (or tell me to swap)
 

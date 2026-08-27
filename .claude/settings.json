@@ -32,7 +32,12 @@
       "Bash(git rm *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(grep -n 'forms: \"P' site/data.js; echo \"---git diff stat---\"; git diff --stat; echo \"---data.js mtime---\"; stat -c '%y' site/data.js)",
+      "Read(//d/TonyDev/English/**)",
+      "Bash(taskkill //F //IM msedge.exe //FI \"WINDOWTITLE eq *edge-cdp*\")",
+      "Bash(node --check site/app.js)",
+      "Bash(node --check site/data.js)"
     ]
   }
 }

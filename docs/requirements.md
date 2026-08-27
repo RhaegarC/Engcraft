@@ -23,11 +23,13 @@ A simple, playful static web app — **"Pronoun Trainer"** — that gives Chines
 
 ### 3.1 In scope
 
-- One-page static site with a **2×2 grid of four activity cards**:
+- One-page static site with a **grid of five activity cards** — a 2×2 block of
+  pronoun activities plus a full-width fifth card:
   1. Personal pronouns — Spelling
   2. Personal pronouns — Usage
   3. Possessive pronouns — Spelling
   4. Possessive pronouns — Usage
+  5. There be — Choice (single-option grammar selection)
 - Word lists, practice rounds, scoring and feedback
 - Runtime TTS audio (Web Speech API, `speechSynthesis`)
 - PWA: manifest, offline-first service worker, app icons, iOS standalone meta tags
@@ -36,7 +38,7 @@ A simple, playful static web app — **"Pronoun Trainer"** — that gives Chines
 
 - No accounts, login, or cross-session progress tracking
 - No timers, streaks, levels, or gamification beyond an end-of-round score + confetti
-- No extra pronoun sets or grammar topics (object-role usage is exercised inside the personal module, not as a separate module)
+- No pronoun sets beyond the two pronoun modules, and no grammar topics beyond the pronoun activities and the there-be activity (object-role usage is exercised inside the personal module, not as a separate module)
 - No backend, database, framework, or build tooling
 
 ## 4. Content
@@ -60,7 +62,7 @@ Notes:
 - `you` and `it` are the same word in subject and object roles.
 - The source list repeated `your, yours` (2nd-person singular and plural are the same words) — treated as **one pair, 12 distinct words**.
 - The possessive module deliberately mixes adjective (`my`) and pronoun (`mine`) forms so usage exercises can contrast them.
-- Each word carries a **`forms` tag** in the data: personal words are `sub` / `obj` / `sub/obj`; possessive words are `poss-adj` (used before a noun) or `poss-pron` (stands alone). This records the subject/object and adjective/pronoun contrast explicitly, per word.
+- Each word carries a **`forms` tag** in the data: personal words are `sub` / `obj` / `sub/obj`; possessive words are `PA` (possessive adjective, used before a noun) or `PP` (possessive pronoun, stands alone). This records the subject/object and adjective/pronoun contrast explicitly, per word.
 
 ### 4.2 Spelling prompts
 
@@ -76,6 +78,15 @@ Notes:
 - Possessive module exercises **adjective vs pronoun** contrast (e.g. "This is ___ book." → *my*; "This book is ___." → *mine*).
 - Sentences are drafted by the authoring agent and **reviewed by the user**; simple, age-appropriate, class-safe.
 - The usage sentence bank is **larger than one-per-word**: the personal module has 21 sentences and the possessive module has 22, so each round's 10 sentences vary. Every sentence records its grammatically-valid alternates in `alsoCorrect` so the runtime keeps them out of the four options (exactly one correct option).
+
+### 4.4 There-be sentences
+
+- A fifth activity drills **"there be"** grammar with **single-option choice**.
+- Each question is a sentence with a blank and a small per-question word bank
+  (is/are, Is/Are, isn't/aren't, any/some, was/were, Was/Were); exactly one
+  option is grammatically correct.
+- The bank holds **40 sentences**; each round draws 10 at random.
+- Sentences are drafted by the authoring agent and **reviewed by the user**.
 
 ## 5. Functional Requirements
 
@@ -96,10 +107,13 @@ Notes:
 
 - **FR-3.1** A sentence with a blank + 3–4 pronoun options; tap to answer.
 - **FR-3.2** Immediate feedback; incorrect answers show a short "why" (e.g. *me* is for receiving, *I* is for doing).
+- **FR-3.3** The There Be activity shows a "there be" sentence with a blank and
+  2–4 grammatical options (is/are, any/some, …); tap to answer, immediate feedback
+  with a short why on a miss.
 
 ### FR-4 Rounds & scoring
 
-- **FR-4.1** Each round draws **10 random items** from the module's pool, shuffled: spelling draws from the module's 12 words; usage draws from the module's usage-sentence bank (personal: 21 sentences, possessive: 22).
+- **FR-4.1** Each round draws **10 random items** from the module's pool, shuffled: spelling draws from the module's 12 words; usage draws from the module's usage-sentence bank (personal: 21 sentences, possessive: 22); the There Be activity draws from its 40-sentence bank.
 - **FR-4.2** End-of-round: score ("You got 8/10!") + a **review missed** button that re-runs missed items.
 - **FR-4.3** Confetti on round completion.
 
@@ -149,7 +163,7 @@ Notes:
 - [ ] All 24 words respond with clear, correct English TTS; a missing-voice fallback message appears when no English voice exists.
 - [ ] PWA installs via Add to Home Screen with a matching icon, launches standalone, and works fully offline after first load (airplane-mode test).
 - [ ] No console errors; autocorrect attributes present on every spelling input.
-- [ ] The 24 Chinese translations and the usage sentences have been reviewed and approved by the user.
+- [ ] The 24 Chinese translations, the usage sentences, and the 40 there-be questions have been reviewed and approved by the user.
 
 ## 10. Open Items
 
@@ -179,3 +193,4 @@ Notes:
 | 14 | Visual style | Playful & bright |
 | 15 | Content authoring | Agent drafts, user reviews |
 | 16 | PWA | Required — offline-first, installable, HTTPS hosting |
+| 17 | Fifth activity (post-launch) | "There be" single-option choice, 40-question bank, rounds of 10 |
