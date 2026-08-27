@@ -35,6 +35,7 @@ const voiceBanner = $("#voiceBanner");
 const FEATURES = {
   spelling: { emoji: "✏️", label: "Spelling", labelZh: "拼写" },
   usage: { emoji: "💬", label: "Usage", labelZh: "用法" },
+  choice: { emoji: "🎯", label: "Choice", labelZh: "选择" },
 };
 
 let state = null; // { moduleId, feature, round, index, score, missed }
@@ -114,10 +115,11 @@ function updateVoiceBanner() {
 function renderMenu() {
   const grid = [];
   for (const mod of MODULES) {
-    for (const key of ["spelling", "usage"]) {
+    const feats = mod.choice ? ["choice"] : ["spelling", "usage"];
+    for (const key of feats) {
       const f = FEATURES[key];
       grid.push(
-        `<button class="card" style="--c:${mod.color}" data-mod="${mod.id}" data-feature="${key}">
+        `<button class="card${mod.choice ? " card-wide" : ""}" style="--c:${mod.color}" data-mod="${mod.id}" data-feature="${key}">
           <span class="card-emoji">${f.emoji}</span>
           <span class="card-mod">${mod.shortTitle}</span>
           <span class="card-zh">${mod.zhTitle}</span>
@@ -153,7 +155,9 @@ function startActivity(moduleId, feature) {
   const pool =
     feature === "spelling"
       ? mod.words.map((w) => ({ ...w }))
-      : mod.usage.map((u) => ({ ...u }));
+      : feature === "usage"
+        ? mod.usage.map((u) => ({ ...u }))
+        : mod.choice.map((c) => ({ ...c }));
   state = {
     moduleId,
     feature,
@@ -181,7 +185,8 @@ function renderItem() {
     return;
   }
   if (state.feature === "spelling") renderSpellingItem(state.round[state.index]);
-  else renderUsageItem(state.round[state.index]);
+  else if (state.feature === "usage") renderUsageItem(state.round[state.index]);
+  else renderChoiceItem(state.round[state.index]);
 }
 
 function updateProgress() {
@@ -249,21 +254,10 @@ function renderSpellingItem(word) {
 
 /* ========================== usage activity =========================== */
 
-function renderUsageItem(item) {
-  const mod = MODULES.find((m) => m.id === state.moduleId);
-  const pool = mod.words.map((w) => w.en).filter((w) => w !== item.answer);
-  const bad = item.alsoCorrect || [];
-  // Only offer options that are NOT also grammatically correct, so exactly one
-  // of the four choices is right (e.g. "help ___" never pairs them with him/her/us).
-  let distractors = shuffle(pool.filter((w) => !bad.includes(w))).slice(0, 3);
-  if (distractors.length < 3) {
-    // Defensive: if a future sentence leaves <3 safe words, pad with non-answer
-    // words so four options always render.
-    const extra = shuffle(pool.filter((w) => !distractors.includes(w))).slice(0, 3 - distractors.length);
-    distractors = distractors.concat(extra);
-  }
-  const options = shuffle([item.answer, ...distractors]);
-
+// Shared option-picker: renders a sentence with a blank, tappable options,
+// feedback, and a Next button. Used by the usage activity (options derived from
+// the module word list) and the there-be choice activity (per-question options).
+function renderOptionsWidget(item, options) {
   const v = el(`
     <div class="usage">
       <div class="sentence">${item.prompt}</div>
@@ -307,6 +301,26 @@ function renderUsageItem(item) {
   });
 
   nextBtn.addEventListener("click", advance);
+}
+
+function renderUsageItem(item) {
+  const mod = MODULES.find((m) => m.id === state.moduleId);
+  const pool = mod.words.map((w) => w.en).filter((w) => w !== item.answer);
+  const bad = item.alsoCorrect || [];
+  // Only offer options that are NOT also grammatically correct, so exactly one
+  // of the four choices is right (e.g. "help ___" never pairs them with him/her/us).
+  let distractors = shuffle(pool.filter((w) => !bad.includes(w))).slice(0, 3);
+  if (distractors.length < 3) {
+    // Defensive: if a future sentence leaves <3 safe words, pad with non-answer
+    // words so four options always render.
+    const extra = shuffle(pool.filter((w) => !distractors.includes(w))).slice(0, 3 - distractors.length);
+    distractors = distractors.concat(extra);
+  }
+  renderOptionsWidget(item, shuffle([item.answer, ...distractors]));
+}
+
+function renderChoiceItem(item) {
+  renderOptionsWidget(item, shuffle(item.options.slice()));
 }
 
 /* ============================== results =============================== */

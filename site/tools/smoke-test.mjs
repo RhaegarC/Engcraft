@@ -90,42 +90,54 @@ async function main() {
   let cards = 0;
   for (let i = 0; i < 60; i++) {
     cards = (await evaluate(`document.querySelectorAll('.card').length`)) || 0;
-    if (cards === 4) break;
+    if (cards === 5) break;
     await sleep(200);
   }
 
-  check(cards === 4, `menu renders 4 activity cards (got ${cards})`);
+  check(cards === 5, `menu renders 5 activity cards (got ${cards})`);
 
-  // Data integrity: every usage sentence must have >=3 safe distractors (words
-  // that are NOT also grammatically correct), so exactly one of 4 options is right.
+  // Data integrity: pronoun usage sentences must have >=3 safe distractors (words
+  // that are NOT also grammatically correct) so exactly one of 4 options is right;
+  // there-be choice questions must put their answer inside a unique 2+ option bank.
   const dataCheck = await evaluate(`(() => {
     const bad = [];
     for (const mod of MODULES) {
-      const all = mod.words.map((w) => w.en);
-      const allowedForms = mod.id === "personal" ? ["sub", "obj", "sub/obj"] : ["poss-adj", "poss-pron"];
-      for (const w of mod.words) {
-        if (!w.forms) bad.push(mod.id + ': word "' + w.en + '" is missing the forms tag');
-        else if (!allowedForms.includes(w.forms)) bad.push(mod.id + ': word "' + w.en + '" has invalid forms "' + w.forms + '" (allowed: ' + allowedForms.join(", ") + ")");
+      const all = (mod.words || []).map((w) => w.en);
+      if (mod.words) {
+        const allowedForms = mod.id === "personal" ? ["sub", "obj", "sub/obj"] : ["PA", "PP"];
+        for (const w of mod.words) {
+          if (!w.forms) bad.push(mod.id + ': word "' + w.en + '" is missing the forms tag');
+          else if (!allowedForms.includes(w.forms)) bad.push(mod.id + ': word "' + w.en + '" has invalid forms "' + w.forms + '" (allowed: ' + allowedForms.join(", ") + ")");
+        }
       }
-      for (const u of mod.usage) {
-        const also = u.alsoCorrect || [];
-        if (!all.includes(u.answer)) bad.push(u.prompt + ': answer "' + u.answer + '" not in word list');
-        for (const w of also) if (!all.includes(w)) bad.push(u.prompt + ': alsoCorrect "' + w + '" not in word list');
-        if (also.includes(u.answer)) bad.push(u.prompt + ': answer is in alsoCorrect');
-        const avail = all.filter((w) => w !== u.answer && !also.includes(w));
-        if (avail.length < 3) bad.push(u.prompt + ': only ' + avail.length + ' safe distractors (<3)');
+      if (mod.usage) {
+        for (const u of mod.usage) {
+          const also = u.alsoCorrect || [];
+          if (!all.includes(u.answer)) bad.push(u.prompt + ': answer "' + u.answer + '" not in word list');
+          for (const w of also) if (!all.includes(w)) bad.push(u.prompt + ': alsoCorrect "' + w + '" not in word list');
+          if (also.includes(u.answer)) bad.push(u.prompt + ': answer is in alsoCorrect');
+          const avail = all.filter((w) => w !== u.answer && !also.includes(w));
+          if (avail.length < 3) bad.push(u.prompt + ': only ' + avail.length + ' safe distractors (<3)');
+        }
+      }
+      if (mod.choice) {
+        for (const c of mod.choice) {
+          if (!Array.isArray(c.options) || c.options.length < 2) bad.push(c.prompt + ': needs >=2 options');
+          else if (!c.options.includes(c.answer)) bad.push(c.prompt + ': answer "' + c.answer + '" not in options [' + c.options.join(", ") + "]");
+          else if (new Set(c.options).size !== c.options.length) bad.push(c.prompt + ': duplicate options');
+        }
       }
     }
     return bad;
   })()`);
-  check(Array.isArray(dataCheck) && dataCheck.length === 0, `usage data has exactly-one-correct constraints (${dataCheck.length} issue(s)${dataCheck.length ? ": " + dataCheck.join("; ") : ""})`);
+  check(Array.isArray(dataCheck) && dataCheck.length === 0, `data integrity: forms, exactly-one-correct usage, valid choice options (${dataCheck.length} issue(s)${dataCheck.length ? ": " + dataCheck.join("; ") : ""})`);
   const menuState = await evaluate(`({
     cards: document.querySelectorAll('.card').length,
     menuHidden: document.querySelector('#menu').hidden,
     activityHidden: document.querySelector('#activity').hidden,
   })`);
   check(
-    menuState.cards === 4 && !menuState.menuHidden && menuState.activityHidden,
+    menuState.cards === 5 && !menuState.menuHidden && menuState.activityHidden,
     `menu visible on load, activity hidden (cards=${menuState.cards}, menuHidden=${menuState.menuHidden}, activityHidden=${menuState.activityHidden})`
   );
 
@@ -192,7 +204,7 @@ async function main() {
   // answer); no other displayed option may be in that item's alsoCorrect list.
   const optsCheck = await evaluate(`(() => {
     const sentence = document.querySelector('.sentence')?.textContent;
-    const item = MODULES.flatMap((m) => m.usage).find((u) => u.prompt === sentence);
+    const item = MODULES.flatMap((m) => m.usage || []).find((u) => u.prompt === sentence);
     if (!item) return { ok: false, reason: "no data item for shown sentence" };
     const shown = Array.from(document.querySelectorAll('.opt')).map((o) => o.textContent);
     const also = item.alsoCorrect || [];
@@ -219,6 +231,46 @@ async function main() {
   check(answered.feedbackShown, "usage feedback appears after tap");
   check(answered.nextShown, "next button appears after tap");
   check(answered.disabledAll, "options lock after tap");
+
+  // Open the There Be choice activity (fifth card).
+  await evaluate(`document.querySelector('#backBtn').click()`);
+  await sleep(100);
+  await evaluate(`document.querySelector('[data-mod="therebe"][data-feature="choice"]').click()`);
+  await sleep(200);
+  const choice = await evaluate(`(() => {
+    const sentence = document.querySelector('.sentence')?.textContent;
+    const item = MODULES.find((m) => m.id === 'therebe').choice.find((c) => c.prompt === sentence);
+    return {
+      title: document.querySelector('#actTitle').textContent,
+      hasSentence: !!sentence && sentence.includes('___'),
+      optCount: document.querySelectorAll('.opt').length,
+      hasAnswer: !!item && Array.from(document.querySelectorAll('.opt')).some((o) => o.textContent === item.answer),
+      progress: document.querySelector('#progressText').textContent,
+    };
+  })()`);
+  check(choice.title === "There Be Choice", `choice view title (${choice.title})`);
+  check(choice.hasSentence, "choice shows there-be sentence with blank");
+  check(choice.optCount >= 2, `choice shows ${choice.optCount} options (>=2)`);
+  check(choice.hasAnswer, "the correct option is among the choices");
+  check(choice.progress === "0 / 10", `choice round is 10 items (${choice.progress})`);
+
+  // Play a full choice round answering correctly; summary must list 10, score 10.
+  const choicePlayed = await evaluate(`(() => {
+    const mod = MODULES.find((m) => m.id === 'therebe');
+    for (let i = 0; i < 10; i++) {
+      const sentence = document.querySelector('.sentence').textContent;
+      const item = mod.choice.find((c) => c.prompt === sentence);
+      const btn = Array.from(document.querySelectorAll('.opt')).find((o) => o.textContent === item.answer);
+      btn.click();
+      document.querySelector('#nextBtn').click();
+    }
+    return {
+      count: document.querySelectorAll('.summary-item').length,
+      score: document.querySelector('.score').textContent,
+    };
+  })()`);
+  check(choicePlayed.count === 10, `choice summary lists all 10 questions (got ${choicePlayed.count})`);
+  check(choicePlayed.score === "10", `choice summary score is 10/10 (got "${choicePlayed.score}")`);
 
   // Play a full spelling round (1 wrong + 9 right) and verify the result summary.
   await evaluate(`document.querySelector('#backBtn').click()`);

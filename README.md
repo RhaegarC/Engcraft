@@ -9,12 +9,17 @@ offline after the first visit and can be installed to the home screen.
 
 ## Activities
 
-A single-page menu offers a 2×2 grid of four activities (module × skill):
+A single-page menu leads with a full-width **There Be** card, then a 2×2 grid of
+four pronoun activities (module × skill):
 
 |  | ✏️ Spelling | 💬 Usage |
 |---|---|---|
+| **There Be** 句型 | — | 🎯 Choice |
 | **Personal** 人称代词 | Type the word you hear | Subject vs object in context |
 | **Possessive** 物主代词 | Type the word you hear | Adjective vs pronoun in context |
+
+The **Choice** card is a single-option grammar selection for "there be" sentences
+(is/are, Is/Are, any/some, isn't/aren't, was/were).
 
 - **Spelling** — shows a Chinese prompt (e.g. 我的) and speaks the English word;
   the child types it from memory. `Check ✓` turns into `Next →` after each answer.
@@ -79,12 +84,14 @@ HTTPS is needed for the service worker in production; see
 All content lives in `site/data.js` as plain data:
 
 - **24 words** — 12 personal (I, me, you, …) and 12 possessive (my, mine, your, …),
-  each tagged with its grammatical **form** (`sub` / `obj` / `sub/obj` /
-  `poss-adj` / `poss-pron`).
+  each tagged with its grammatical **form** (`sub` / `obj` / `sub/obj` for personal;
+  `PA` = possessive adjective, `PP` = possessive pronoun).
 - **43 usage sentences** — 21 personal (subject vs object roles) and 22 possessive
   (adjective vs pronoun contrast), each with the answer, a short *why* for wrong
   taps, and an `alsoCorrect` list of grammatically-valid alternates that are kept
   out of the multiple-choice options.
+- **40 there-be sentences** — is/are, Is/Are questions, isn't/aren't, any/some,
+  was/were; each with its own 2-option word bank, so exactly one option is correct.
 
 The Chinese translations and usage sentences are drafted content awaiting final
 review by the tutor — see [docs/content.md](docs/content.md).
@@ -95,7 +102,7 @@ There is no build step. Two dev-only tools live in `site/tools/` (excluded from
 deploys):
 
 ```bash
-node site/tools/smoke-test.mjs   # launches headless Edge via CDP and checks 28 behaviors
+node site/tools/smoke-test.mjs   # launches headless Edge via CDP and checks 35 behaviors
 node site/tools/make-icons.mjs   # regenerates the PNG app icons
 ```
 
