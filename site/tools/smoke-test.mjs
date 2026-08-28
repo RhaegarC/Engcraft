@@ -2,6 +2,9 @@
 /* Headless smoke test: launches Edge via CDP, loads the app from file://,
    verifies the menu renders, clicks an activity, and checks the stage. */
 import { spawn } from "node:child_process";
+import { readFileSync, existsSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const EDGE = "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe";
 const URL = "file:///d:/TonyDev/English/site/index.html";
@@ -35,6 +38,24 @@ function check(cond, label) {
   console.log(`${cond ? "PASS" : "FAIL"}  ${label}`);
   if (!cond) failures++;
 }
+
+/* ---- Static PWA checks (Node-side; a real SW never runs under file://) ---- */
+const siteDir = join(dirname(fileURLToPath(import.meta.url)), "..");
+const sw = readFileSync(join(siteDir, "sw.js"), "utf8");
+const index = readFileSync(join(siteDir, "index.html"), "utf8");
+
+const vendorPath = join(siteDir, "vendor", "workbox-window.prod.umd.js");
+check(existsSync(vendorPath), "vendored workbox-window.prod.umd.js exists");
+if (existsSync(vendorPath)) {
+  const vendor = readFileSync(vendorPath, "utf8");
+  check(vendor.includes("Workbox"), "vendored build exports Workbox");
+}
+
+check(sw.includes("pronoun-trainer-v2"), "sw cache name bumped to v2 (so a new SW is byte-different and detected)");
+check(sw.includes('"SKIP_WAITING"') && sw.includes("self.skipWaiting()"), "sw handles SKIP_WAITING message by skipping waiting");
+check(sw.includes("vendor/workbox-window.prod.umd.js"), "sw precaches the vendored workbox-window build");
+check(index.includes("vendor/workbox-window.prod.umd.js"), "index loads vendored workbox-window");
+check(index.includes("updateBanner"), "index has an update banner element");
 
 async function main() {
   let target;
@@ -140,6 +161,22 @@ async function main() {
     menuState.cards === 5 && !menuState.menuHidden && menuState.activityHidden,
     `menu visible on load, activity hidden (cards=${menuState.cards}, menuHidden=${menuState.menuHidden}, activityHidden=${menuState.activityHidden})`
   );
+
+  // PWA update notification: workbox-window must be loaded and the banner element
+  // must exist but stay hidden (no service worker can run under file://, so no
+  // update is ever detected here — we only assert the wiring is present).
+  const pwa = await evaluate(`(() => {
+    const b = document.querySelector('#updateBanner');
+    return {
+      workboxLoaded: typeof window.workbox !== 'undefined' && typeof window.workbox.Workbox === 'function',
+      banner: !!b,
+      bannerHidden: b ? b.hidden : null,
+      reloadBtn: !!document.querySelector('#updateReload'),
+    };
+  })()`);
+  check(pwa.workboxLoaded, "workbox-window loaded (window.workbox.Workbox is a function)");
+  check(pwa.banner && pwa.bannerHidden === true, `update banner present and hidden on load (banner=${pwa.banner}, hidden=${pwa.bannerHidden})`);
+  check(pwa.reloadBtn, "update banner has a reload button");
 
   // Click Personal pronouns -> Spelling
   await evaluate(`document.querySelector('[data-mod="personal"][data-feature="spelling"]').click()`);
