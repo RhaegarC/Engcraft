@@ -20,6 +20,12 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- New-version banner; shown by workbox-window when an updated SW is waiting. -->
+  <div id="updateBanner" class="update-banner" hidden>
+    <span>🆕 New version available — reload to update</span>
+    <button id="updateReload" class="update-btn">Reload</button>
+  </div>
+
   <!-- Home: 2x2 grid of four activities -->
   <main id="menu">
     <div class="logo">🎯</div>
@@ -48,8 +54,34 @@
 
   <script src="data.js"></script>
   <script src="app.js"></script>
+  <script src="vendor/workbox-window.prod.umd.js"></script>
   <script>
-    if ("serviceWorker" in navigator) {
+    // PWA update notification: workbox-window detects a new version of sw.js and
+    // reveals the banner; the user taps Reload, we message the waiting SW to
+    // activate, then reload so the fresh app takes over.
+    if ("serviceWorker" in navigator && window.workbox && window.workbox.Workbox) {
+      const wb = new window.workbox.Workbox("sw.js");
+
+      wb.addEventListener("waiting", () => {
+        document.getElementById("updateBanner").hidden = false;
+      });
+
+      document.getElementById("updateReload").addEventListener("click", () => {
+        wb.messageSkipWaiting();
+      });
+
+      // After skipWaiting() the new SW activates and claims the page; reload to
+      // hand the user the updated app.
+      wb.addEventListener("controlling", () => {
+        window.location.reload();
+      });
+
+      window.addEventListener("load", () => {
+        wb.register().catch(() => {});
+      });
+    } else if ("serviceWorker" in navigator) {
+      // Vendor script didn't load: fall back to plain registration so the PWA
+      // still goes offline-first (just without the update banner).
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("sw.js").catch(() => {});
       });

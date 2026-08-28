@@ -45,6 +45,52 @@ button {
   touch-action: manipulation;
 }
 
+/* ====================== PWA update banner ====================== */
+
+.update-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
+  background: linear-gradient(135deg, var(--purple), var(--orange));
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  box-shadow: 0 6px 20px rgba(45, 42, 50, 0.3);
+  animation: pop 0.22s ease;
+}
+
+.update-btn {
+  flex: none;
+  border-radius: 999px;
+  padding: 10px 22px;
+  background: #fff;
+  color: var(--purple);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.update-btn:active {
+  transform: scale(0.95);
+}
+
+/* display:flex above would override the hidden attribute — keep it hidden. */
+.update-banner[hidden] {
+  display: none;
+}
+
+/* Keeps content from hiding under the fixed banner. */
+.update-banner:not([hidden]) ~ main,
+.update-banner:not([hidden]) ~ section {
+  padding-top: 68px;
+}
+
 /* ============================== menu ============================== */
 
 #menu {

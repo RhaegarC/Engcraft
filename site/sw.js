@@ -1,5 +1,5 @@
 /* Pronoun Trainer — service worker. Offline-first after first visit. */
-const CACHE = "pronoun-trainer-v1";
+const CACHE = "pronoun-trainer-v2";
 const ASSETS = [
   "./",
   "./index.html",
@@ -7,6 +7,7 @@ const ASSETS = [
   "./app.js",
   "./data.js",
   "./manifest.json",
+  "./vendor/workbox-window.prod.umd.js",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/apple-touch-icon.png",
@@ -17,7 +18,9 @@ self.addEventListener("install", (e) => {
     caches
       .open(CACHE)
       .then((c) => c.addAll(ASSETS))
-      .then(() => self.skipWaiting())
+      // Deliberately no self.skipWaiting() here: workbox-window on the page
+      // needs the new version to sit in "waiting" so it can show the update
+      // banner. The user confirms, then we skipWaiting via the message below.
   );
 });
 
@@ -61,4 +64,12 @@ self.addEventListener("fetch", (e) => {
         })
     )
   );
+});
+
+// The page (workbox-window) asks us to take over after the user taps the
+// "new version available" banner's reload button.
+self.addEventListener("message", (e) => {
+  if (e.data && e.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });

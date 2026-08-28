@@ -37,7 +37,14 @@
       "Read(//d/TonyDev/English/**)",
       "Bash(taskkill //F //IM msedge.exe //FI \"WINDOWTITLE eq *edge-cdp*\")",
       "Bash(node --check site/app.js)",
-      "Bash(node --check site/data.js)"
+      "Bash(node --check site/data.js)",
+      "Bash(curl -sI --max-time 10 https://unpkg.com/workbox-window@7.1.0/build/workbox-window.prod.js)",
+      "Bash(npm --version)",
+      "Bash(git checkout *)",
+      "Bash(git pull *)",
+      "Bash(git stash *)",
+      "Bash(grep -oE 'self\\\\\\)\\\\.[A-Za-z$.]+=[{}]' workbox-window.prod.umd.js)",
+      "Bash(node --check site/tools/smoke-test.mjs)"
     ]
   }
 }
