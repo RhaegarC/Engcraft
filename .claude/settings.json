@@ -56,7 +56,8 @@
       "Bash(node --check site/push.js)",
       "Bash(node --check site/sw.js)",
       "Bash(node --check site/tools/send-push.mjs)",
-      "Bash(git commit -m 'Add web push notifications \\(feature 02\\) *)"
+      "Bash(git commit -m 'Add web push notifications \\(feature 02\\) *)",
+      "Bash(gh run *)"
     ]
   }
 }
