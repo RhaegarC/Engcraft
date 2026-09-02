@@ -185,6 +185,32 @@ h1 {
   min-height: 130px;
 }
 
+/* ===================== web push opt-in button ===================== */
+
+.notif-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px auto 0;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.notif-btn:disabled {
+  opacity: 0.85;
+  cursor: default;
+}
+
+/* display:inline-flex would override the hidden attribute — keep it hidden. */
+.notif-btn[hidden] {
+  display: none;
+}
+
 /* ============================ activity ============================ */
 
 #activity {
