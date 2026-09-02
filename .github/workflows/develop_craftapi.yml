@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '/api'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '/api/EngFun'
   DOTNET_VERSION: '8.0.x'
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
         shell: bash
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          dotnet build --configuration Release --output ./output
+          dotnet publish --configuration Release --output ./output
           popd
       
       - name: Login to Azure
@@ -46,5 +46,7 @@ jobs:
         with:
           app-name: 'craftapi'
           slot-name: 'Production'
-          package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+          package: './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+          scm-do-build-during-deployment: false
+          enable-oryx-build: false
           
