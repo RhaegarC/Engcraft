@@ -73,3 +73,47 @@ self.addEventListener("message", (e) => {
     self.skipWaiting();
   }
 });
+
+// ---- Web Push ----
+// The push service delivers a {title, body, url} payload from the Send
+// Function; surface it as a system notification.
+self.addEventListener("push", (e) => {
+  let payload = { title: "Egnlish Craft", body: "", url: "./" };
+  if (e.data) {
+    try {
+      Object.assign(payload, e.data.json());
+    } catch {}
+  }
+  e.waitUntil(
+    self.registration.showNotification(payload.title, {
+      body: payload.body,
+      icon: "./icons/icon-192.png",
+      badge: "./icons/icon-192.png",
+      data: { url: payload.url },
+    })
+  );
+});
+
+// Tapping the notification closes it and brings the app to the front.
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const target = new URL(
+    (e.notification.data && e.notification.data.url) || "./",
+    self.registration.scope
+  ).href;
+  e.waitUntil(
+    clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then(async (windows) => {
+        for (const w of windows) {
+          if ("focus" in w) {
+            await w.focus();
+            if (w.url !== target && "navigate" in w) await w.navigate(target);
+            return;
+          }
+        }
+        return clients.openWindow(target);
+      })
+      .catch(() => {})
+  );
+});

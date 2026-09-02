@@ -44,7 +44,19 @@
       "Bash(git pull *)",
       "Bash(git stash *)",
       "Bash(grep -oE 'self\\\\\\)\\\\.[A-Za-z$.]+=[{}]' workbox-window.prod.umd.js)",
-      "Bash(node --check site/tools/smoke-test.mjs)"
+      "Bash(node --check site/tools/smoke-test.mjs)",
+      "Bash(git rev-list *)",
+      "Bash(git commit -m 'Add feature-02 spec for web push notifications *)",
+      "Bash(dotnet --list-sdks)",
+      "Bash(npx --version)",
+      "Bash(dotnet add *)",
+      "Bash(npx -y web-push generate-vapid-keys)",
+      "Bash(dotnet build *)",
+      "Bash(node --check site/push-config.js)",
+      "Bash(node --check site/push.js)",
+      "Bash(node --check site/sw.js)",
+      "Bash(node --check site/tools/send-push.mjs)",
+      "Bash(git commit -m 'Add web push notifications \\(feature 02\\) *)"
     ]
   }
 }

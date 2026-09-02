@@ -57,6 +57,50 @@ check(sw.includes("vendor/workbox-window.prod.umd.js"), "sw precaches the vendor
 check(index.includes("vendor/workbox-window.prod.umd.js"), "index loads vendored workbox-window");
 check(index.includes("updateBanner"), "index has an update banner element");
 
+/* ---- Feature 02: Web Push (static; the live push loop needs HTTPS) ---------- */
+const apiDir = join(siteDir, "..", "api", "EngFun");
+const pcPath = join(siteDir, "push-config.js");
+const pjPath = join(siteDir, "push.js");
+const pcExists = existsSync(pcPath);
+const pjExists = existsSync(pjPath);
+
+check(pcExists, "site/push-config.js exists");
+if (pcExists) {
+  const pc = readFileSync(pcPath, "utf8");
+  check(pc.includes("vapidPublicKey") && pc.includes("apiBase"), "push-config exposes VAPID public key + apiBase");
+}
+check(pjExists, "site/push.js exists");
+if (pjExists) {
+  const pj = readFileSync(pjPath, "utf8");
+  check(pj.includes("pushManager.subscribe") && pj.includes("userVisibleOnly"), "push.js subscribes via PushManager with userVisibleOnly");
+}
+check(sw.includes('addEventListener("push"') && sw.includes("showNotification"), "sw handles push events and shows a notification");
+check(sw.includes('addEventListener("notificationclick"'), "sw handles notification clicks");
+
+check(index.includes("push-config.js") && index.includes("push.js"), "index loads push-config.js and push.js");
+check(index.includes('id="notifBtn"'), "index has an enable-notifications button");
+
+// Backend: Functions project retargeted to net8.0 with the two endpoints.
+const csprojPath = join(apiDir, "EngFun.csproj");
+const csprojExists = existsSync(csprojPath);
+check(csprojExists, "EngFun.csproj exists");
+if (csprojExists) {
+  const csproj = readFileSync(csprojPath, "utf8");
+  check(csproj.includes("<TargetFramework>net8.0</TargetFramework>"), "EngFun retargeted to net8.0");
+  check(csproj.includes("WebPush") && csproj.includes("Azure.Data.Tables"), "EngFun references WebPush + Azure.Data.Tables");
+}
+const subscribeCs = join(apiDir, "SubscribeFunction.cs");
+const sendCs = join(apiDir, "SendFunction.cs");
+check(existsSync(subscribeCs), "SubscribeFunction.cs exists");
+check(existsSync(sendCs), "SendFunction.cs exists");
+if (existsSync(subscribeCs) && existsSync(sendCs)) {
+  const s = readFileSync(subscribeCs, "utf8");
+  const g = readFileSync(sendCs, "utf8");
+  check(s.includes('Function("Subscribe"') && s.includes("AuthorizationLevel.Anonymous"), "subscribe endpoint: HTTP POST, Anonymous");
+  check(g.includes('Function("Send"') && g.includes("AuthorizationLevel.Function"), "send endpoint: HTTP POST, Function key");
+  check(s.includes("AddEntityAsync") && g.includes("SendNotificationAsync"), "subscribe persists a row; send pushes via WebPush");
+}
+
 async function main() {
   let target;
   for (let i = 0; i < 60; i++) {
@@ -177,6 +221,17 @@ async function main() {
   check(pwa.workboxLoaded, "workbox-window loaded (window.workbox.Workbox is a function)");
   check(pwa.banner && pwa.bannerHidden === true, `update banner present and hidden on load (banner=${pwa.banner}, hidden=${pwa.bannerHidden})`);
   check(pwa.reloadBtn, "update banner has a reload button");
+
+  // Feature 02: push opt-in wiring present in the DOM.
+  const pushUi = await evaluate(`(() => {
+    const b = document.querySelector('#notifBtn');
+    return {
+      btn: !!b,
+      configLoaded: typeof window.PUSH_CONFIG !== 'undefined' && !!window.PUSH_CONFIG.apiBase,
+    };
+  })()`);
+  check(pushUi.configLoaded, "push-config.js loaded (PUSH_CONFIG.apiBase set)");
+  check(pushUi.btn, "menu has an enable-notifications button");
 
   // Click Personal pronouns -> Spelling
   await evaluate(`document.querySelector('[data-mod="personal"][data-feature="spelling"]').click()`);
